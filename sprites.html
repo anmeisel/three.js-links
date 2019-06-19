@@ -81,13 +81,13 @@
 
             var texture = new THREE.Texture();
             var loader = new THREE.ImageLoader(manager);
-            loader.load('images/texture.png', function(image) {
+            loader.load('assets/texture.png', function(image) {
                 texture.image = image;
                 texture.needsUpdate = true;
             });
 
             var loader = new THREE.OBJLoader(manager);
-            loader.load('images/diagram2.obj', function(object) {
+            loader.load('assets/diagram2.obj', function(object) {
                 object.traverse( function(child) {
                     if (child instanceof THREE.Mesh) {
                         child.material.map = texture;
