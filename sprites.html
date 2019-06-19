@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>A M</title>
+        <meta charset="utf-8">
+        <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+        <style>
+        p {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%);
+            font-family: Arial;
+            font-size: 12px;
+        }
+        a.code {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-family: Arial;
+            font-size: 12px;
+        }
+        </style>
+    </head>
+
+    <body>
+
+        <script src="three.js-master/build/three.min.js"></script>
+        <script src="three.js-master/examples/js/loaders/OBJLoader.js"></script>
+        <script src="three.js-master/examples/js/controls/OrbitControls.js"></script>
+        <script src="three.js-master/examples/js/Detector.js"></script>
+        <script src="three.js-master/js/examples/js/libs/stats.min.js"></script>
+        <script src="three.js-master/js/examples/js/THREEx.FullScreen.js"></script>
+        <script src="three.js-master/js/examples/js/THREEx.WindowResize.js"></script>
+
+        <div id="ThreeJS" style="position: absolute; left:0px; top:0px"></div>
+
+        <script>
+
+        // custom global variables
+
+        var objects = [];
+
+        init();
+        animate();
+                
+        function init() {
+
+            // scene
+
+            camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 80000);
+            camera.position.z = 850;
+
+            scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xff0000);
+
+            var ambient = new THREE.AmbientLight(0x101030);
+            scene.add(ambient);
+
+            // model
+
+            var manager = new THREE.LoadingManager();
+            manager.onProgress = function(item, loaded, total) {
+                console.log(item, loaded, total);
+            };
+
+            var onProgress = function(xhr) {
+                if (xhr.lengthComputable) {
+                    var percentComplete = xhr.loaded / xhr.total * 100;
+                    if (percentComplete < 100) {var downloaded = ('Loading: ' + Math.round(percentComplete, 2) + '%'); 
+                    }
+                    else {var downloaded = (" ");
+                    }
+                  document.getElementById("Loader").innerHTML = downloaded;
+                }
+            };
+
+            var onError = function(xhr) {
+            };
+
+            var texture = new THREE.Texture();
+            var loader = new THREE.ImageLoader(manager);
+            loader.load('images/texture.png', function(image) {
+                texture.image = image;
+                texture.needsUpdate = true;
+            });
+
+            var loader = new THREE.OBJLoader(manager);
+            loader.load('images/diagram2.obj', function(object) {
+                object.traverse( function(child) {
+                    if (child instanceof THREE.Mesh) {
+                        child.material.map = texture;
+                        child.material.side = THREE.DoubleSide;
+                    }
+            });
+
+            object.position.y = 0;
+            object.position.x = 0;
+            object.scale.x = 70;
+            object.scale.y = 70;
+            object.scale.z = 70;
+            scene.add( object );
+
+            }, onProgress, onError);
+
+            // render model
+
+            if ( Detector.webgl )
+                renderer = new THREE.WebGLRenderer({ antialias: true });
+            else
+                renderer = new THREE.CanvasRenderer(); 
+                projector = new THREE.Projector();
+                renderer.shadowMap.enabled = true;
+                renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                renderer.setSize(window.innerWidth, window.innerHeight);
+                container = document.getElementById('ThreeJS');
+                container.appendChild(renderer.domElement);
+                document.addEventListener('mousedown', onDocumentMouseDown, false);
+                window.addEventListener('resize', onWindowResize, false);
+
+                // events
+
+                THREEx.WindowResize(renderer, camera);
+                THREEx.FullScreen.bindKey({ charCode : 'm'.charCodeAt(0) });
+
+                // controls
+
+                controls = new THREE.OrbitControls(camera, renderer.domElement);
+                renderer.setClearColor (0xffffff, 1);
+
+                // stats
+
+                stats = new Stats();
+                stats.domElement.style.position = 'relative';
+                stats.domElement.style.bottom = '0px';
+                stats.domElement.style.zIndex = 100;
+                container.appendChild(stats.domElement);
+
+                // light
+
+                var light = new THREE.PointLight(0xffffff, 1, 0);
+                light.position.set(0, 0, 900);
+                var ambientLight = new THREE.AmbientLight(0x101030);
+                scene.add(light);
+
+        }
+
+
+        // labels
+
+        var geometry = new THREE.SphereGeometry(4,32,32);
+        for (var i = 0; i < 5; i++) {
+            var object = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
+                shading: THREE.FlatShading,
+                color: 0x0000ee
+            }));
+
+            console.log(object);
+            switch (i) {
+                case 0:
+                camera.add(object);
+                    object.userData = {
+                        URL:"https://www.youtube.com/watch?v=DeWrneNglJY"
+                    };
+                object.position.set(-195, 220, -10); //x, y, z
+                var spriteFeatures = makeTextSprite("you want alchemy");
+                spriteFeatures.position.set(-195, 220, -10);
+                scene.add( spriteFeatures );
+
+
+
+                    break;
+                case 1:
+                    object.userData = {
+                        URL:"https://www.youtube.com/watch?v=C8VeYWRBBZY&t=3s"
+                    };
+                object.position.set(197, 170, -150);
+                var spriteContact = makeTextSprite("birds, pt. 1");
+                spriteContact.position.set(197, 170, -150);
+                scene.add( spriteContact );
+
+
+                    break;
+                case 2:
+                    object.userData = {
+                        URL:"https://www.youtube.com/watch?v=QcwLiDCENfA"
+                    };
+                object.position.set(-205, -15, -130);
+                var spritesignup = makeTextSprite("slow jam");
+                spritesignup.position.set(-205, -15, -130);
+                scene.add( spritesignup );
+
+
+                    break;
+                case 3:
+                    object.userData = {
+                        URL:"https://www.youtube.com/watch?v=wjX6OsvrXd4"
+                    };
+                object.position.set(65, 70, 93);
+                var spriteAbout = makeTextSprite("folding");
+                spriteAbout.position.set(65, 70, 93);
+                scene.add( spriteAbout );
+
+
+                    break;
+                case 4:
+                    object.userData = {
+                        URL:"https://www.youtube.com/watch?v=g6DRlyxi8hc"
+                    };
+                object.position.set(175, -185,-100);
+                var spriteAbout = makeTextSprite("before I let go");
+                spriteAbout.position.set(175, -185, -100);
+                scene.add( spriteAbout );
+            }
+
+            scene.add(object);
+            objects.push(object);
+
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+        }
+
+        function onDocumentMouseDown(event) {
+            event.preventDefault();
+            var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 -
+                1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
+            projector.unprojectVector(vector, camera);
+
+            var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
+            var intersects = raycaster.intersectObjects(objects);
+            if (intersects.length > 0) {
+                window.open(intersects[0].object.userData.URL,"_target");
+                intersects[0].object.material.color = new THREE.Color(0x551abb);
+                intersects[0].object.material.needsUpdate = true; 
+            }
+        }
+        
+
+        // sprite styling
+           
+        function makeTextSprite(message, parameters) {
+            if (parameters === undefined) parameters = {};
+            var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
+            var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 32;
+            var borderThickness = parameters.hasOwnProperty("borderThickness") ? parameters["borderThickness"] : 1;
+            var borderColor = parameters.hasOwnProperty("borderColor") ?parameters["borderColor"] : { r:0, g:0, b:0, a:1.0 };
+            var backgroundColor = parameters.hasOwnProperty("backgroundColor") ?parameters["backgroundColor"] : { r:255, g:255, b:255, a:1.0 };
+            var textColor = parameters.hasOwnProperty("textColor") ?parameters["textColor"] : { r:0, g:0, b:0, a:1.0 };
+
+            var canvas = document.createElement('canvas');
+            var context = canvas.getContext('2d');
+            context.font = fontsize + "px " + fontface;
+            var metrics = context.measureText(message);
+            var textWidth = metrics.width;
+
+            context.fillStyle   = "rgba(" + backgroundColor.r + "," + backgroundColor.g + "," + backgroundColor.b + "," + backgroundColor.a + ")";
+            context.strokeStyle = "rgba(" + borderColor.r + "," + borderColor.g + "," + borderColor.b + "," + borderColor.a + ")";
+            context.lineWidth = borderThickness;
+            context.fillStyle = "rgba("+textColor.r+", "+textColor.g+", "+textColor.b+", 1.0)";
+            context.fillText( message, borderThickness, fontsize + borderThickness);
+
+            var texture = new THREE.Texture(canvas) 
+            texture.needsUpdate = true;
+
+            var spriteMaterial = new THREE.SpriteMaterial({ map: texture, useScreenCoordinates: false });
+            var sprite = new THREE.Sprite(spriteMaterial);
+            sprite.scale.set(4 * fontsize, 2 * fontsize, 5 * fontsize);
+            return sprite;  
+        }
+
+
+        function animate() {
+            requestAnimationFrame(animate);
+            render();       
+            update();
+        }
+
+
+
+        function update() {
+            controls.update();
+            stats.update();
+
+        }
+
+
+
+        function render() {
+            renderer.render(scene, camera);
+        }
+
+        </script>
+
+        <p><span id="Loader"></span></p>
+
+        <a href="https://github.com/anmeisel/three.js-links" class="code">view code</a>
+
+    </body>
+</html>
