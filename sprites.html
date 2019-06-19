@@ -52,10 +52,8 @@
 
             camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 1, 80000);
             camera.position.z = 850;
-
             scene = new THREE.Scene();
             scene.background = new THREE.Color(0xff0000);
-
             var ambient = new THREE.AmbientLight(0x101030);
             scene.add(ambient);
 
@@ -87,27 +85,25 @@
                 texture.needsUpdate = true;
             });
 
-            var loader = new THREE.OBJLoader(manager);
+            var loader = new THREE.OBJLoader(manager);          
             loader.load('assets/diagram2.obj', function(object) {
                 object.traverse( function(child) {
                     if (child instanceof THREE.Mesh) {
                         child.material.map = texture;
                         child.material.side = THREE.DoubleSide;
                     }
-            });
-
-            object.position.y = 0;
-            object.position.x = 0;
-            object.scale.x = 70;
-            object.scale.y = 70;
-            object.scale.z = 70;
-            scene.add( object );
-
+                });
+                object.position.y = 0;
+                object.position.x = 0;
+                object.scale.x = 70;
+                object.scale.y = 70;
+                object.scale.z = 70;
+                scene.add( object );                
             }, onProgress, onError);
 
             // render model
 
-            if ( Detector.webgl )
+            if (Detector.webgl)
                 renderer = new THREE.WebGLRenderer({ antialias: true });
             else
                 renderer = new THREE.CanvasRenderer(); 
@@ -145,14 +141,14 @@
                 light.position.set(0, 0, 900);
                 var ambientLight = new THREE.AmbientLight(0x101030);
                 scene.add(light);
-
+            
         }
-
 
         // labels
 
         var geometry = new THREE.SphereGeometry(4,32,32);
         for (var i = 0; i < 5; i++) {
+            
             var object = new THREE.Mesh(geometry, new THREE.MeshBasicMaterial({
                 shading: THREE.FlatShading,
                 color: 0x0000ee
@@ -170,8 +166,6 @@
                 spriteFeatures.position.set(-195, 220, -10);
                 scene.add( spriteFeatures );
 
-
-
                     break;
                 case 1:
                     object.userData = {
@@ -181,7 +175,6 @@
                 var spriteContact = makeTextSprite("birds, pt. 1");
                 spriteContact.position.set(197, 170, -150);
                 scene.add( spriteContact );
-
 
                     break;
                 case 2:
@@ -193,7 +186,6 @@
                 spritesignup.position.set(-205, -15, -130);
                 scene.add( spritesignup );
 
-
                     break;
                 case 3:
                     object.userData = {
@@ -203,7 +195,6 @@
                 var spriteAbout = makeTextSprite("folding");
                 spriteAbout.position.set(65, 70, 93);
                 scene.add( spriteAbout );
-
 
                     break;
                 case 4:
@@ -215,23 +206,25 @@
                 spriteAbout.position.set(175, -185, -100);
                 scene.add( spriteAbout );
             }
-
+            
             scene.add(object);
             objects.push(object);
-
+            
         }
 
         function onWindowResize() {
+            
             camera.aspect = window.innerWidth / window.innerHeight;
             camera.updateProjectionMatrix();
+            
         }
 
         function onDocumentMouseDown(event) {
+            
             event.preventDefault();
             var vector = new THREE.Vector3((event.clientX / window.innerWidth) * 2 -
                 1, -(event.clientY / window.innerHeight) * 2 + 1, 0.5);
             projector.unprojectVector(vector, camera);
-
             var raycaster = new THREE.Raycaster(camera.position, vector.sub(camera.position).normalize());
             var intersects = raycaster.intersectObjects(objects);
             if (intersects.length > 0) {
@@ -239,12 +232,13 @@
                 intersects[0].object.material.color = new THREE.Color(0x551abb);
                 intersects[0].object.material.needsUpdate = true; 
             }
+            
         }
         
-
         // sprite styling
            
         function makeTextSprite(message, parameters) {
+            
             if (parameters === undefined) parameters = {};
             var fontface = parameters.hasOwnProperty("fontface") ? parameters["fontface"] : "Arial";
             var fontsize = parameters.hasOwnProperty("fontsize") ? parameters["fontsize"] : 32;
@@ -272,27 +266,28 @@
             var sprite = new THREE.Sprite(spriteMaterial);
             sprite.scale.set(4 * fontsize, 2 * fontsize, 5 * fontsize);
             return sprite;  
+            
         }
 
-
         function animate() {
+            
             requestAnimationFrame(animate);
             render();       
             update();
+            
         }
 
-
-
         function update() {
+            
             controls.update();
             stats.update();
 
         }
 
-
-
         function render() {
+            
             renderer.render(scene, camera);
+            
         }
 
         </script>
